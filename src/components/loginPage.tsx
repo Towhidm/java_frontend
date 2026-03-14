@@ -19,7 +19,6 @@ export const LoginPage = () => {
       login(response.data.user);
       message.success("Login successful!");
       console.log("Login succeeded", response.data.user);
-      window.location.href = "/";
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Login failed";
       message.error(errorMsg);
