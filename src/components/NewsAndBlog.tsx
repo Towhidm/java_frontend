@@ -1,4 +1,4 @@
-import React from "react";
+
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -41,14 +41,14 @@ const NewsAndBlog = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {blogPosts.map((post) => (
           <div key={post.id} className="group cursor-pointer">
-            {/* Image Container */}
+        
             <div className="relative overflow-hidden rounded-2xl mb-6 aspect-16/10">
               <img
                 src={post.image}
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              {/* Category Badge */}
+            
               <div className="absolute top-6 left-6">
                 <span className="bg-[#3BA59C] text-white text-sm font-semibold px-5 py-2 rounded-xl">
                   {post.category}
@@ -56,7 +56,7 @@ const NewsAndBlog = () => {
               </div>
             </div>
 
-            {/* Post Details */}
+           
             <div className="space-y-4">
               <p className="text-slate-400 font-medium">{post.date}</p>
               <h3 className="text-2xl font-bold text-[#0F172A] leading-tight group-hover:text-[#3BA59C] transition-colors">

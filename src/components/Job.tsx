@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/axiosInstance";
-import { useAuth } from "../context/AuthContext";
 import { Briefcase, Clock, Wallet, MapPin } from "lucide-react";
 import BookmarkButton from "./BookMarkButton/BookmarkButton";
+import Skeleton_component from "./Skeleton/Skeleton";
 
 interface Job {
   _id: string;
@@ -22,7 +22,6 @@ interface Job {
 }
 
 const Jobs = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,7 +30,7 @@ const Jobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await api.get("/jobs/Alljobs");
+        const res = await api.get("/jobs/Alljobs?limit=5");
         setJobs(res.data.jobs);
         setLoading(false);
       } catch (err: any) {
@@ -45,9 +44,14 @@ const Jobs = () => {
 
   if (loading)
     return (
-      <div className="p-8 text-center text-slate-500 font-medium">
-        Loading jobs...
+      <div className="max-w-6xl mx-auto p-4 md:p-12 bg-white">
+
+      <div className="space-y-6">
+          <Skeleton_component />
+          <Skeleton_component />
+        </div>
       </div>
+       
     );
   if (error) return <p className="text-red-500 p-8 text-center">{error}</p>;
 
@@ -61,7 +65,8 @@ const Jobs = () => {
         <p className="text-slate-500 max-w-lg mx-auto">
           At eu lobortis  amet lacus ut a...
         </p>
-        <div className="w-10 h-1 bg-pink-300 mx-auto mt-6 rounded-full opacity-60"></div>
+        
+        <div className="mt-7 "><Link to ="/jobs" className="text-[#3BA59C]   font-medium border-b-2 border-[#3BA59C] ">All Jobs</Link></div>
       </div>
 
       {/* Jobs Feed */}
@@ -126,8 +131,7 @@ const Jobs = () => {
 
               {/* Action Button */}
               <button
-                onClick={() => navigate(`apply/${job._id}`)}
-                disabled={user?.role === "EMPLOYER"}
+                onClick={() => navigate(`JobDetails/${job._id}`)}
                 className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-bold py-2 w-full md:w-30.25 mt-10 md:mt-0 rounded-[10px] text-base transition-all active:scale-95 disabled:bg-slate-200"
               >
                 Job Details

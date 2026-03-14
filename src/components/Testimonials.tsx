@@ -1,7 +1,9 @@
 import { Avatar, Rate, Grid } from 'antd';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 const { useBreakpoint } = Grid;
+
 
 const testimonialsData = [
   {
@@ -33,19 +35,27 @@ const testimonialsData = [
   }
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2, 
+      staggerChildren: 0.2,
     },
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { y: 50, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 80, damping: 15 } },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 80,
+      damping: 15,
+    },
+  },
 };
 
 const TestimonialsSection = () => {

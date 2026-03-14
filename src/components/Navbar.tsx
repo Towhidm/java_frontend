@@ -56,10 +56,10 @@ const Navbar: React.FC<NavbarProps> = ({ isHomePage = false }) => {
           <Link to="/jobs" className="hover:text-teal-400">
             Jobs
           </Link>
-          <Link to="/about" className="hover:text-teal-400">
+          <Link to="/About-Us" className="hover:text-teal-400">
             About Us
           </Link>
-          <Link to="/contact" className="hover:text-teal-400">
+          <Link to="/ContactUs" className="hover:text-teal-400">
             Contact Us
           </Link>
         </div>
@@ -89,7 +89,9 @@ const Navbar: React.FC<NavbarProps> = ({ isHomePage = false }) => {
             </Button>
 
             <div className="bg-teal-500 rounded-full w-10 h-10 flex items-center justify-center">
-              <CgProfile className="text-white text-xl" />
+              <Link to="/profile">
+                <CgProfile className="text-white text-xl" />
+              </Link>
             </div>
           </div>
         )}
@@ -109,43 +111,53 @@ const Navbar: React.FC<NavbarProps> = ({ isHomePage = false }) => {
         </div>
       </div>
 
-      {/* MOBILE MENU DROPDOWN (Controlled via Tailwind Classes) */}
+      {/* MOBILE MENU DROPDOWN */}
       <div
-        className={`md:hidden text-white  bg-black transition-all duration-500 ease-in-out overflow-hidden border-t border-white/10 ${
+        className={`md:hidden text-white bg-black transition-all duration-500 ease-in-out overflow-hidden border-t border-white/10 ${
           isOpen ? "max-h-125 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="flex flex-col gap-4 p-6  justify-center items-center">
+        <div className="flex flex-col gap-4 p-6 justify-center items-center">
           <Link
             to="/"
+            onClick={() => setIsOpen(false)} // Close menu on click
             className="hover:text-teal-400 text-lg transition-colors"
           >
             Home
           </Link>
-          {" "}
+
           <Link
             to="/jobs"
+            onClick={() => setIsOpen(false)} // Close menu on click
             className="hover:text-teal-400 text-lg transition-colors"
           >
             Jobs
           </Link>
+
           <Link
-            to="/about"
+            to="/About-Us"
+            onClick={() => setIsOpen(false)} // Close menu on click
             className="hover:text-teal-400 text-lg transition-colors"
           >
             About Us
           </Link>
+
           <Link
-            to="/contact"
+            to="/ContactUs"
+            onClick={() => setIsOpen(false)} // Close menu on click
             className="hover:text-teal-400 text-lg transition-colors"
           >
             Contact Us
           </Link>
+
           {user ? (
-            <div className="flex flex-col justify-center items-center  gap-4">
+            <div className="flex flex-col justify-center items-center gap-4">
               <Button
                 className="bg-teal-500 hover:bg-teal-600 text-white border-none"
-                onClick={logout}
+                onClick={() => {
+                  logout();
+                  setIsOpen(false); // Close menu on logout
+                }}
                 variant="solid"
                 color="primary"
               >
@@ -153,19 +165,23 @@ const Navbar: React.FC<NavbarProps> = ({ isHomePage = false }) => {
               </Button>
 
               <div className="bg-teal-500 rounded-full w-10 h-10 flex items-center justify-center">
-                <CgProfile className="text-white text-xl" />
+                <Link to="/profile">
+                  <CgProfile className="text-white text-xl" />
+                </Link>
               </div>
             </div>
           ) : (
             <>
               <Link
                 to="/login"
+                onClick={() => setIsOpen(false)} // Close menu on click
                 className="hover:text-teal-400 text-lg transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/register"
+                onClick={() => setIsOpen(false)} // Close menu on click
                 className="bg-teal-500 hover:bg-teal-600 text-center text-white px-5 py-3 rounded-lg font-medium transition-all w-full"
               >
                 Register
