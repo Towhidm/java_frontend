@@ -128,63 +128,75 @@ const JobPage = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {jobs.map((job) => (
-            <div
-              key={job._id}
-              className="bg-white border border-slate-100 rounded-2xl p-6 md:p-7 shadow-sm hover:shadow-md transition-shadow relative"
-            >
-              {/* Top Row */}
-              <div className="flex justify-between items-center mb-4">
-                <span className="bg-[#E6F4F2] text-[#3BA59C] text-xs font-semibold px-3 py-1.5 rounded-lg">
-                  New Posting
-                </span>
-                <BookmarkButton jobId={job._id}/>
-              </div>
+        {jobs.map((job) => (
+          <div
+            key={job._id}
+            className="bg-white border border-slate-100 rounded-2xl p-6 md:p-7 shadow-sm hover:shadow-md transition-shadow relative"
+          >
+            {/* Top Row: Time and Bookmark (Stays inside the card) */}
+            <div className="flex justify-between items-center mb-4">
+              <span className="bg-[#E6F4F2] text-[#3BA59C] text-xs font-semibold px-3 py-1.5 rounded-lg">
+                10 min ago
+              </span>
+              <BookmarkButton jobId={job._id}/>
+            </div>
 
-              {/* Main Content */}
-              <div className="flex flex-col mb-10 md:mb-8 md:flex-row md:items-center gap-6">
+            {/* Main Content Row */}
+            <div className="flex flex-col mb-10 md:mb-8 md:flex-row md:items-center gap-6">
+              {/* Company Logo */}
+              <div className=" md:flex md:items-center md:gap-4">
                 <img
-                  src={job.employer?.profileImage?.url || "https://img.lovepik.com/element/45013/6497.png_860.png"}
+                  src={
+                    job.employer?.profileImage?.url ||
+                    "https://img.lovepik.com/element/45013/6497.png_860.png"
+                  }
                   alt={job.companyName}
-                  className="w-14 h-14 rounded-full object-cover bg-slate-100"
+                  className="w-14 h-14 rounded-full object-cover my-2 bg-red-500"
                 />
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-1">{job.title}</h3>
-                  <p className="text-slate-500 font-medium">{job.companyName}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-1">
+                    {job.title}
+                  </h3>
+                  <p className="text-slate-500 font-medium">
+                    {job.companyName}
+                  </p>
                 </div>
-              </div>
-
-              {/* Bottom Row: Icons & Button */}
-              <div className="md:flex md:items-center md:justify-between">
-                <div className="flex flex-wrap items-start gap-4 md:gap-x-6">
-                  <div className="flex items-center text-slate-500 gap-2">
-                    <Briefcase size={18} className="text-[#3BA59C]" />
-                    <span className="text-sm font-medium">{job.category}</span>
-                  </div>
-                  <div className="flex items-center text-slate-500 gap-2">
-                    <Clock size={18} className="text-[#3BA59C]" />
-                    <span className="text-sm font-medium">{job.jobType}</span>
-                  </div>
-                  <div className="flex items-center text-slate-500 gap-2">
-                    <Wallet size={18} className="text-[#3BA59C]" />
-                    <span className="text-sm font-medium">{job.salary}</span>
-                  </div>
-                  <div className="flex items-center text-slate-500 gap-2">
-                    <MapPin size={18} className="text-[#3BA59C]" />
-                    <span className="text-sm font-medium">{job.location}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => navigate(`/JobDetails/${job._id}`)}
-                  className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-bold py-2 px-6 mt-10 md:mt-0 rounded-[10px] text-base transition-all active:scale-95"
-                >
-                  Job Details
-                </button>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Job Title & Details */}
+            <div className="md:flex md:items-center md:justify-between">
+              {/* Icons Grid */}
+              <div className="flex flex-col md:flex-row items-start justify-center gap-y-6 md:gap-x-6">
+                <div className="flex items-center text-slate-500 gap-2">
+                  <Briefcase size={18} className="text-[#3BA59C]" />
+                  <span className="text-sm font-medium">{job.category}</span>
+                </div>
+                <div className="flex items-center text-slate-500 gap-2">
+                  <Clock size={18} className="text-[#3BA59C]" />
+                  <span className="text-sm font-medium">{job.jobType}</span>
+                </div>
+                <div className="flex items-center text-slate-500 gap-2">
+                  <Wallet size={18} className="text-[#3BA59C]" />
+                  <span className="text-sm font-medium">{job.salary}</span>
+                </div>
+                <div className="flex items-center text-slate-500 gap-2">
+                  <MapPin size={18} className="text-[#3BA59C]" />
+                  <span className="text-sm font-medium">{job.location}</span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                onClick={() => navigate(`JobDetails/${job._id}`)}
+                className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-bold py-2 w-full md:w-30.25 mt-10 md:mt-0 rounded-[10px] text-base transition-all active:scale-95 disabled:bg-slate-200"
+              >
+                Job Details
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
       )}
     </div>
   );

@@ -129,7 +129,7 @@ const JobDetails = () => {
         {/* RIGHT SIDEBAR - Appears FIRST on Mobile (order-1), SECOND on Desktop (order-2) */}
         <div className="order-1 lg:order-2 space-y-6">
           <button
-            className={`w-full py-3 rounded-xl font-semibold text-lg 
+            className={`w-full py-3 rounded-xl font-semibold text-lg cursor-pointer
     ${
       user?.role ==="JOBSEEKER"
         ? "bg-[#309689] text-white hover:bg-[#2d817a] shadow-lg shadow-teal-100 transition-all active:scale-95"
