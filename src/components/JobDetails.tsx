@@ -131,7 +131,7 @@ const JobDetails = () => {
           <button
             className={`w-full py-3 rounded-xl font-semibold text-lg 
     ${
-      user
+      user?.role ==="JOBSEEKER"
         ? "bg-[#309689] text-white hover:bg-[#2d817a] shadow-lg shadow-teal-100 transition-all active:scale-95"
         : "bg-gray-300 text-gray-500 cursor-not-allowed"
     }
