@@ -99,12 +99,12 @@ const JobPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button
+          {/* <button
             type="submit"
             className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-semibold px-8 py-3 rounded-lg transition-all active:scale-95"
           >
             Search
-          </button>
+          </button> */}
         </form>
         
         <div className="w-10 h-1 bg-pink-300 mx-auto mt-10 rounded-full opacity-60"></div>
