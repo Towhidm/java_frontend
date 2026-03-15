@@ -188,7 +188,7 @@ const JobPage = () => {
 
               {/* Action Button */}
               <button
-                onClick={() => navigate(`JobDetails/${job._id}`)}
+                onClick={() => navigate(`/JobDetails/${job._id}`)}
                 className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-bold py-2 w-full md:w-30.25 mt-10 md:mt-0 rounded-[10px] text-base transition-all active:scale-95 disabled:bg-slate-200"
               >
                 Job Details
