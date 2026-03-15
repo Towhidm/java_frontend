@@ -43,7 +43,7 @@ function App() {
           }
         />
         <Route
-          path="/Jobs"
+          path="/jobs"
           element={
             <>
               <Navbar isHomePage={false} />
@@ -53,7 +53,7 @@ function App() {
           }
         />
         <Route
-          path="/JobDetails/:jobId"
+          path="/jobdetails/:jobId"
           element={
             <>
               <Navbar isHomePage={false} /> <JobDetails /> <Footer />
@@ -61,7 +61,7 @@ function App() {
           }
         />
         <Route
-          path="/About-Us"
+          path="/about-us"
           element={
             <>
               <Navbar isHomePage={false} /> <AboutUs /> <Footer />
@@ -69,7 +69,7 @@ function App() {
           }
         />
         <Route
-          path="/ContactUs"
+          path="/contactus"
           element={
             <>
               <Navbar isHomePage={false} /> <ContactUs /> <Footer />
@@ -81,8 +81,8 @@ function App() {
         <Route path="/verify_otp" element={<Verify_Otp />} />
         <Route path="/profile" element={<ProfileDashboard />} />
         <Route path="/applicants/:jobId" element={<JobApplicants />} />
-        <Route path="/JobPost" element={<JobPost />} />
-        <Route path="Jobs/apply/:jobId" element={<ApplyJob />} />
+        <Route path="/jobpost" element={<JobPost />} />
+        <Route path="jobs/apply/:jobId" element={<ApplyJob />} />
       </Routes>
     </AuthProvider>
   );
