@@ -1,8 +1,10 @@
 "use client";
 
 import { Form, Input, Button, Select, message } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const { Option } = Select;
 
@@ -16,15 +18,25 @@ type RegisterData = {
 export default function RegisterForm() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate("/");
+    }
+  }, [user, navigate, isLoading]);
 
   const handleSubmit = async (values: RegisterData) => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/register", values, { withCredentials: true });
+      const res = await api.post("/auth/register", values, {
+        withCredentials: true,
+      });
       message.success(res.data.message);
       form.resetFields();
-      window.location.href = `/verify_otp?email=${values.email}`;
+      
+      navigate(`/verify_otp?email=${values.email}`);
     } catch (error: any) {
       const fieldErrors = error.response?.data?.fieldErrors;
       if (fieldErrors) {
@@ -32,7 +44,7 @@ export default function RegisterForm() {
           Object.entries(fieldErrors).map(([name, msg]) => ({
             name,
             errors: [msg as string],
-          }))
+          })),
         );
       } else if (error.response?.data?.message) {
         message.error(error.response.data.message);
@@ -66,7 +78,10 @@ export default function RegisterForm() {
               { min: 2, message: "Name must be at least 2 characters" },
             ]}
           >
-            <Input className="rounded-md border-gray-300" placeholder="Enter your name" />
+            <Input
+              className="rounded-md border-gray-300"
+              placeholder="Enter your name"
+            />
           </Form.Item>
 
           {/* Email */}
@@ -78,7 +93,10 @@ export default function RegisterForm() {
               { type: "email", message: "Invalid email format" },
             ]}
           >
-            <Input className="rounded-md border-gray-300" placeholder="Enter your email" />
+            <Input
+              className="rounded-md border-gray-300"
+              placeholder="Enter your email"
+            />
           </Form.Item>
 
           {/* Password */}
@@ -90,7 +108,10 @@ export default function RegisterForm() {
               { min: 6, message: "Password must be at least 6 characters" },
             ]}
           >
-            <Input.Password className="rounded-md border-gray-300" placeholder="Enter your password" />
+            <Input.Password
+              className="rounded-md border-gray-300"
+              placeholder="Enter your password"
+            />
           </Form.Item>
 
           {/* Role */}

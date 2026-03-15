@@ -1,24 +1,32 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Form, Input, Button, Card, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { loginUser } from "../api/authService";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login,user } = useAuth();
+  const navigate = useNavigate(); 
+  useEffect(()=>{
+    if(user){
+      navigate("/");
+    }
+  },[user,navigate])
 
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
       const response = await loginUser(values);
 
-      // Save user info to Context State
+      
       login(response.data.user);
       message.success("Login successful!");
       console.log("Login succeeded", response.data.user);
+      
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Login failed";
       message.error(errorMsg);
