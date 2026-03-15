@@ -1,21 +1,21 @@
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import { Form, Input, Button, Card, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { loginUser } from "../api/authService";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
-  const { login,user } = useAuth();
-  const navigate = useNavigate(); 
-  useEffect(()=>{
-    if(user){
-      navigate("/");
-    }
-  },[user,navigate])
+  const { login, } = useAuth();
+  // const navigate = useNavigate(); 
+  // useEffect(()=>{
+  //   if(user){
+  //     navigate("/");
+  //   }
+  // },[user,navigate])
 
   const onFinish = async (values: any) => {
     setLoading(true);
