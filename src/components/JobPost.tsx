@@ -2,7 +2,6 @@ import { Form, Input, Button, Select, Card, message } from "antd";
 import { api } from "../api/axiosInstance";
 
 const { Option } = Select;
-const { TextArea } = Input;
 
 const CreateJob = () => {
   const [form] = Form.useForm();
@@ -10,19 +9,16 @@ const CreateJob = () => {
   const onFinish = async (values: any) => {
     try {
       const res = await api.post("/jobs/create-job", values);
-
       message.success(res.data.message);
-
       form.resetFields();
     } catch (error: any) {
       const err = error.response?.data;
 
-      if (err?.errors) {
-        const fields = Object.keys(err.errors).map((key) => ({
+      if (err?.fieldErrors) {
+        const fields = Object.keys(err.fieldErrors).map((key) => ({
           name: key,
-          errors: err.errors[key],
+          errors: [err.fieldErrors[key]],
         }));
-
         form.setFields(fields);
       }
 
@@ -54,15 +50,27 @@ const CreateJob = () => {
             name="title"
             rules={[{ required: true, message: "Job title required" }]}
           >
-            <Input placeholder="Frontend Developer" />
+            <Input placeholder="Backend Developer" />
           </Form.Item>
 
           <Form.Item
             label="Company Name"
             name="companyName"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Company name required" }]}
           >
-            <Input />
+            <Input placeholder="TechBD" />
+          </Form.Item>
+
+          <Form.Item
+            label="Company Location"
+            name="companyLocation"
+            rules={[{ required: true, message: "Company location required" }]}
+          >
+            <Input placeholder="Dhaka" />
+          </Form.Item>
+
+          <Form.Item label="Company Details" name="companyDetails">
+            <Input.TextArea rows={2} placeholder="IT Software Hub" />
           </Form.Item>
 
           <Form.Item
@@ -70,7 +78,7 @@ const CreateJob = () => {
             name="category"
             rules={[{ required: true }]}
           >
-            <Input placeholder="Software Development" />
+            <Input placeholder="IT" />
           </Form.Item>
 
           <Form.Item
@@ -79,58 +87,38 @@ const CreateJob = () => {
             rules={[{ required: true }]}
           >
             <Select placeholder="Select job type">
-              <Option value="Full-time">Full-time</Option>
-              <Option value="Part-time">Part-time</Option>
+              <Option value="Full-Time">Full-Time</Option>
+              <Option value="Part-Time">Part-Time</Option>
               <Option value="Contract">Contract</Option>
             </Select>
           </Form.Item>
 
           <Form.Item label="Salary" name="salary" rules={[{ required: true }]}>
-            <Input placeholder="$2000/month" />
+            <Input placeholder="50000" />
           </Form.Item>
 
           <Form.Item
-            label="Location"
+            label="Job Location"
             name="location"
             rules={[{ required: true }]}
           >
-            <Input placeholder="Remote / Dhaka" />
+            <Input placeholder="Dhaka" />
           </Form.Item>
 
           <Form.Item
-            label="Description"
-            name="description"
-            rules={[{ required: true }]}
+            label="Qualification"
+            name="qualification"
+            rules={[{ required: true, message: "Qualification required" }]}
           >
-            <TextArea rows={4} />
+            <Input placeholder="BSc" />
           </Form.Item>
 
-          <Form.Item label="Responsibilities" name="responsibilities">
+          <Form.Item label="Skills Required" name="skills">
             <Select
               mode="tags"
               style={{ width: "100%" }}
-              placeholder="Press enter after each responsibility"
+              placeholder="Java, Spring Boot, MySQL"
             />
-          </Form.Item>
-
-          <Form.Item label="Skills" name="skills">
-            <Select
-              mode="tags"
-              style={{ width: "100%" }}
-              placeholder="React, Node, MongoDB"
-            />
-          </Form.Item>
-
-          <Form.Item label="Experience" name="experience">
-            <Input placeholder="3 Years" />
-          </Form.Item>
-
-          <Form.Item label="Degree" name="degree">
-            <Input placeholder="Bachelor / Master" />
-          </Form.Item>
-
-          <Form.Item label="Tags" name="tags">
-            <Select mode="tags" />
           </Form.Item>
 
           <Form.Item>

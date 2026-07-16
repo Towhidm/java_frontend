@@ -1,16 +1,18 @@
-import { Card, Upload, Button, message, Typography } from "antd";
+import { Card, Upload, Button, message, Typography, Input } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { api } from "../api/axiosInstance";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const ApplyJob = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);
+  const [coverLetter, setCoverLetter] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleUpload = async () => {
@@ -24,22 +26,19 @@ const ApplyJob = () => {
 
       const formData = new FormData();
       formData.append("cvFile", file);
+      if (coverLetter.trim()) {
+        formData.append("coverLetter", coverLetter.trim());
+      }
 
-      const res = await api.post(
-        `/jobs/apply/${jobId}`,
-        formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await api.post(`/jobs/apply/${jobId}`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       message.success(res.data.message);
-
       navigate("/jobs");
-
     } catch (error: any) {
       const err = error.response?.data;
       message.error(err?.message || "Application failed");
@@ -71,7 +70,7 @@ const ApplyJob = () => {
         </Title>
 
         <Text type="secondary">
-          Upload your CV in PDF format to apply.
+          Upload your CV (PDF) and optionally add a cover letter.
         </Text>
 
         <div style={{ marginTop: 30 }}>
@@ -87,10 +86,19 @@ const ApplyJob = () => {
             }}
             maxCount={1}
           >
-            <Button icon={<UploadOutlined />}>
-              Select CV (PDF)
-            </Button>
+            <Button icon={<UploadOutlined />}>Select CV (PDF)</Button>
           </Upload>
+        </div>
+
+        <div style={{ marginTop: 24 }}>
+          <Text strong>Cover Letter</Text>
+          <TextArea
+            rows={4}
+            style={{ marginTop: 8 }}
+            placeholder="Interested in Backend Developer role using Spring Boot."
+            value={coverLetter}
+            onChange={(e) => setCoverLetter(e.target.value)}
+          />
         </div>
 
         <Button

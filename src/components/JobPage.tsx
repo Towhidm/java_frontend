@@ -1,8 +1,7 @@
 import { useEffect, useState ,useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/axiosInstance";
-import { Briefcase, Clock, Wallet, MapPin, Search } from "lucide-react"; // Added Search icon
-import BookmarkButton from "./BookMarkButton/BookmarkButton";
+import { Briefcase, Clock, Wallet, MapPin, Search } from "lucide-react";
 import Skeleton_component from "./Skeleton/Skeleton";
 
 interface Job {
@@ -13,12 +12,6 @@ interface Job {
   jobType: string;
   location: string;
   salary: string;
-  employer: {
-    _id: string;
-    profileImage?: {
-      url: string;
-    };
-  };
 }
 
 const JobPage = () => {
@@ -136,23 +129,15 @@ const JobPage = () => {
             {/* Top Row: Time and Bookmark (Stays inside the card) */}
             <div className="flex justify-between items-center mb-4">
               <span className="bg-[#E6F4F2] text-[#3BA59C] text-xs font-semibold px-3 py-1.5 rounded-lg">
-                10 min ago
+                Open Role
               </span>
-              <BookmarkButton jobId={job._id}/>
             </div>
 
-            {/* Main Content Row */}
             <div className="flex flex-col mb-10 md:mb-8 md:flex-row md:items-center gap-6">
-              {/* Company Logo */}
-              <div className=" md:flex md:items-center md:gap-4">
-                <img
-                  src={
-                    job.employer?.profileImage?.url ||
-                    "https://img.lovepik.com/element/45013/6497.png_860.png"
-                  }
-                  alt={job.companyName}
-                  className="w-14 h-14 rounded-full object-cover my-2 bg-red-500"
-                />
+              <div className="md:flex md:items-center md:gap-4">
+                <div className="w-14 h-14 rounded-full bg-[#E6F4F2] flex items-center justify-center my-2">
+                  <Briefcase className="text-[#3BA59C]" size={24} />
+                </div>
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-1">
                     {job.title}

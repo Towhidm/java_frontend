@@ -8,7 +8,6 @@ import HomePageHero, {
   LogoCloud,
 } from "./components/HomePage";
 import RegisterForm from "./components/RegisterPage";
-import Verify_Otp from "./components/Verify_Otp";
 import Navbar from "./components/Navbar";
 import JobPost from "./components/JobPost";
 import ApplyJob from "./components/ApplyJob";
@@ -22,6 +21,7 @@ import ContactUs from "./components/ContactUs";
 import { ProfileDashboard } from "./components/Profile/ProfileDashboard";
 import JobApplicants from "./components/Profile/Applicants";
 import JobPage from "./components/JobPage";
+import TodosPage from "./pages/TodosPage";
 function App() {
   return (
     <AuthProvider>
@@ -78,11 +78,11 @@ function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterForm />} />
-        <Route path="/verify_otp" element={<Verify_Otp />} />
         <Route path="/profile" element={<ProfileDashboard />} />
         <Route path="/applicants/:jobId" element={<JobApplicants />} />
         <Route path="/jobpost" element={<JobPost />} />
         <Route path="jobs/apply/:jobId" element={<ApplyJob />} />
+        <Route path="/todos" element={<TodosPage />} />
       </Routes>
     </AuthProvider>
   );

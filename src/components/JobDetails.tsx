@@ -18,24 +18,19 @@ import {
   Award,
 } from "lucide-react";
 import { message } from "antd";
-import BookmarkButton from "./BookMarkButton/BookmarkButton";
 
 interface Job {
   _id: string;
   title: string;
   companyName: string;
   description: string;
-  responsibilities: string[];
   skills: string[];
   category: string;
   jobType: string;
   location: string;
   salary: string;
-  experience: string;
-  degree: string;
-  employer: {
-    profileImage?: { url: string };
-  };
+  degree?: string;
+  qualification?: string;
 }
 
 const JobDetails = () => {
@@ -79,33 +74,18 @@ const JobDetails = () => {
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start mb-6 md:mb-10 gap-6">
         <div className="flex gap-4 md:gap-5 items-center w-full md:w-auto">
-          <img
-            src={
-              job.employer?.profileImage?.url ||
-              "https://via.placeholder.com/80"
-            }
-            className="hidden lg:block lg:mt-10 lg:w-20 lg:h-20 lg:rounded-full lg:object-cover lg:border lg:border-slate-100 lg:shrink-0"
-            alt="Company Logo"
-          />
+          <div className="hidden lg:flex lg:mt-10 lg:w-20 lg:h-20 lg:rounded-full lg:bg-[#EAF5F3] lg:items-center lg:justify-center lg:shrink-0">
+            <Briefcase className="text-[#3BA59C]" size={32} />
+          </div>
           <div className="grow">
-            {/* Added relative and right-0 for exact mobile positioning of tag/bookmark */}
             <div className="flex items-center justify-between gap-3 relative">
               <span className="bg-[#EAF5F3] text-[#3BA59C] text-[16px] md:text-xs px-3 py-1 rounded-lg tracking-wide">
-                10 min ago
+                Open Role
               </span>
-              {/* Mobile Bookmark Button (hidden on desktop) */}
-              <div className="md:hidden absolute right-0 top-0">
-                <BookmarkButton jobId={job._id} />
-              </div>
             </div>
-            <img
-              src={
-                job.employer?.profileImage?.url ||
-                "https://via.placeholder.com/80"
-              }
-              className="w-16 h-16 mt-10 rounded-full object-cover border border-slate-100 shrink-0 lg:hidden"
-              alt="Company Logo"
-            />
+            <div className="w-16 h-16 mt-10 rounded-full bg-[#EAF5F3] flex items-center justify-center shrink-0 lg:hidden">
+              <Briefcase className="text-[#3BA59C]" size={28} />
+            </div>
             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 mt-2 leading-tight">
               {job.title}
             </h1>
@@ -117,10 +97,6 @@ const JobDetails = () => {
               <InfoItem icon={<MapPin size={20} />} text={job.location} />
             </div>
           </div>
-        </div>
-        {/* Desktop Bookmark Button (hidden on mobile) */}
-        <div className="hidden md:block">
-          <BookmarkButton jobId={job._id} />
         </div>
       </div>
 
@@ -165,13 +141,13 @@ const JobDetails = () => {
               />
               <OverviewItem
                 icon={<Award size={20} />}
-                label="Experience"
-                value={job.experience}
+                label="Qualification"
+                value={job.qualification || job.degree || "—"}
               />
               <OverviewItem
                 icon={<GraduationCap size={20} />}
-                label="Degree"
-                value={job.degree}
+                label="Skills"
+                value={(job.skills || []).join(", ") || "—"}
               />
               <OverviewItem
                 icon={<Wallet size={20} />}
@@ -249,27 +225,10 @@ const JobDetails = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-6 text-slate-900">
-              Key Responsibilities
-            </h2>
-            <ul className="space-y-4">
-              {job.responsibilities?.map((item, i) => (
-                <li
-                  key={i}
-                  className="flex gap-4 items-start text-slate-600 text-[17px]"
-                >
-                  <Check size={20} className="text-[#3BA59C] mt-1 shrink-0" />{" "}
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold mb-6 text-slate-900">
               Professional Skills
             </h2>
             <ul className="space-y-4">
-              {job.skills?.map((skill, i) => (
+              {(job.skills?.length ? job.skills : []).map((skill, i) => (
                 <li
                   key={i}
                   className="flex gap-4 items-start text-slate-600 text-[17px]"
@@ -278,6 +237,9 @@ const JobDetails = () => {
                   {skill}
                 </li>
               ))}
+              {!job.skills?.length && (
+                <li className="text-slate-500">No skills listed.</li>
+              )}
             </ul>
           </section>
 
