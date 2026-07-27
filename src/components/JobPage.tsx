@@ -39,7 +39,7 @@ const JobPage = () => {
         : "/jobs/Alljobs";
         
       const res = await api.get(endpoint, { signal });
-      setJobs(res.data.jobs);
+      setJobs(Array.isArray(res.data?.jobs) ? res.data.jobs : []);
       setError(null);
     } catch (err: any) {
       if (err.name === 'CanceledError') return; 

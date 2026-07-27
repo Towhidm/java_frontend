@@ -24,10 +24,13 @@ const Jobs = () => {
     const fetchJobs = async () => {
       try {
         const res = await api.get("/jobs/Alljobs?limit=5");
-        setJobs(res.data.jobs);
-        setLoading(false);
+        const list = Array.isArray(res.data?.jobs) ? res.data.jobs : [];
+        setJobs(list);
+        setError(null);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch jobs");
+        setJobs([]);
+        setError(err.response?.data?.message || "Failed to fetch jobs. Is the backend running on port 5000?");
+      } finally {
         setLoading(false);
       }
     };
@@ -64,6 +67,9 @@ const Jobs = () => {
 
       {/* Jobs Feed */}
       <div className="space-y-6">
+        {jobs.length === 0 && (
+          <p className="text-slate-400 text-center py-10">No jobs posted yet.</p>
+        )}
         {jobs.map((job) => (
           <div
             key={job._id}
@@ -116,7 +122,7 @@ const Jobs = () => {
 
               {/* Action Button */}
               <button
-                onClick={() => navigate(`JobDetails/${job._id}`)}
+                onClick={() => navigate(`/jobdetails/${job._id}`)}
                 className="bg-[#3BA59C] hover:bg-[#2d817a] text-white font-bold py-2 w-full md:w-30.25 mt-10 md:mt-0 rounded-[10px] text-base transition-all active:scale-95 disabled:bg-slate-200"
               >
                 Job Details
