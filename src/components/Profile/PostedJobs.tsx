@@ -1,11 +1,11 @@
-import { useState,useEffect } from "react";
-import { Users} from "lucide-react"; 
+import { useState, useEffect } from "react";
+import { Users } from "lucide-react";
 import { api } from "../../api/axiosInstance";
 
 interface JobType {
   _id: string;
   title: string;
- applicantCount:number;
+  applicantCount: number;
 }
 
 export const PostedJobs = () => {
@@ -13,30 +13,36 @@ export const PostedJobs = () => {
 
   useEffect(() => {
     const fetchPostedJobs = async () => {
-      const { data } = await api.get('/profile/getEmployerJobs');
-      setJobs(data); 
+      const { data } = await api.get("/profile/getEmployerJobs");
+      setJobs(data);
     };
     fetchPostedJobs();
   }, []);
 
   return (
-    <div className="bg-white p-8 rounded-4xl shadow-sm border border-emerald-50">
-      <h2 className="text-2xl font-bold mb-6">Manage Posted Jobs</h2>
-      <div className="grid gap-6">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="px-6 py-5 border-b border-slate-100">
+        <h2 className="text-2xl font-semibold text-slate-900">Manage Posted Jobs</h2>
+      </div>
+      <div className="p-6 grid gap-4">
+        {jobs.length === 0 && (
+          <p className="text-slate-500 text-base">No jobs posted yet.</p>
+        )}
         {jobs.map((job) => (
-          <div key={job._id} className="p-6 rounded-2xl border border-slate-100 bg-slate-50">
-            <div className="flex justify-between items-center">
+          <div key={job._id} className="p-5 rounded-xl border border-slate-100 bg-slate-50/80">
+            <div className="flex justify-between items-center gap-4">
               <div>
-                <h3 className="text-xl font-bold">{job.title}</h3>
-                <div className="flex items-center gap-2 mt-2">
-                  <Users size={18} className="text-[#00BC7D]" />
-                  <span className="font-bold text-[#00BC7D]">{job.applicantCount}</span> 
-                  <span className="text-xs text-slate-500 uppercase font-semibold">Applicants</span>
+                <h3 className="text-xl font-semibold text-slate-900">{job.title}</h3>
+                <div className="flex items-center gap-2 mt-2 text-base">
+                  <Users size={18} className="text-[#3BA59C]" />
+                  <span className="font-medium text-[#3BA59C]">{job.applicantCount}</span>
+                  <span className="text-sm text-slate-500">Applicants</span>
                 </div>
               </div>
-              <button 
-                onClick={() => window.location.href = `/applicants/${job._id}`}
-                className="bg-black hover:bg-[#00BC7D] text-white px-6 py-3 rounded-xl font-bold transition-all transform active:scale-95"
+              <button
+                type="button"
+                onClick={() => (window.location.href = `/applicants/${job._id}`)}
+                className="bg-slate-900 hover:bg-[#3BA59C] text-white px-5 py-2.5 rounded-lg font-medium text-base transition-colors"
               >
                 View
               </button>

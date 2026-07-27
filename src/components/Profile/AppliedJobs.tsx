@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axiosInstance";
-import { Briefcase, Calendar, Link as LinkIcon, MessageSquare } from "lucide-react";
+import { Briefcase, Calendar, Link as LinkIcon, MessageSquare, Lock } from "lucide-react";
 import { Button, Input, message } from "antd";
 
 interface JobType {
@@ -21,27 +21,49 @@ interface ApplicationType {
   };
 }
 
-interface SeekerReview {
-  _id: string;
-  applicationId: string;
-  comment: string;
+interface ReviewBundle {
+  myReview: { comment: string } | null;
+  hasMyReview: boolean;
+  counterpartReview: { comment: string } | null;
+  canSeeCounterpart: boolean;
+  counterpartLabel: string;
+  unlockHint: string;
 }
 
 export const AppliedJobs = () => {
   const [applications, setApplications] = useState<ApplicationType[]>([]);
-  const [reviews, setReviews] = useState<SeekerReview[]>([]);
+  const [reviewBundles, setReviewBundles] = useState<Record<string, ReviewBundle>>({});
   const [loading, setLoading] = useState(true);
   const [reviewDrafts, setReviewDrafts] = useState<Record<string, string>>({});
   const [submittingId, setSubmittingId] = useState<string | null>(null);
 
+  const loadReviewBundle = async (applicationId: string) => {
+    const { data } = await api.get(`/profile/application-reviews/${applicationId}`);
+    return data as ReviewBundle;
+  };
+
   const loadData = async () => {
     try {
-      const [appsRes, reviewsRes] = await Promise.all([
-        api.get("/profile/applied-jobs"),
-        api.get("/profile/my-seeker-reviews"),
-      ]);
-      setApplications(appsRes.data);
-      setReviews(reviewsRes.data);
+      const appsRes = await api.get("/profile/applied-jobs");
+      const apps: ApplicationType[] = appsRes.data;
+      setApplications(apps);
+
+      const shortlisted = apps.filter((a) => a.status === "shortlisted");
+      const bundles = await Promise.all(
+        shortlisted.map(async (app) => {
+          try {
+            const bundle = await loadReviewBundle(app._id);
+            return [app._id, bundle] as const;
+          } catch {
+            return null;
+          }
+        })
+      );
+      const map: Record<string, ReviewBundle> = {};
+      for (const entry of bundles) {
+        if (entry) map[entry[0]] = entry[1];
+      }
+      setReviewBundles(map);
     } catch {
       message.error("Failed to load applications");
     } finally {
@@ -62,8 +84,10 @@ export const AppliedJobs = () => {
     setSubmittingId(applicationId);
     try {
       await api.post(`/profile/seeker-review/${applicationId}`, { comment });
-      message.success("Seeker review saved");
-      await loadData();
+      message.success("Your review was saved. You can now see the employer’s review if they left one.");
+      const bundle = await loadReviewBundle(applicationId);
+      setReviewBundles((prev) => ({ ...prev, [applicationId]: bundle }));
+      setReviewDrafts((prev) => ({ ...prev, [applicationId]: "" }));
     } catch (err: any) {
       message.error(err.response?.data?.message || "Failed to save review");
     } finally {
@@ -72,91 +96,122 @@ export const AppliedJobs = () => {
   };
 
   if (loading) {
-    return <div className="animate-pulse bg-slate-200 h-20 rounded-2xl" />;
+    return <div className="animate-pulse bg-slate-200 h-20 rounded-xl" />;
   }
 
   return (
-    <div className="bg-white p-8 rounded-4xl shadow-sm border border-emerald-50">
-      <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-        <Briefcase className="text-[#00BC7D]" /> My Applications
-      </h2>
-      <div className="space-y-4">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-lg bg-[#E6F4F2] flex items-center justify-center">
+          <Briefcase size={20} className="text-[#3BA59C]" />
+        </div>
+        <h2 className="text-2xl font-semibold text-slate-900">My Applications</h2>
+      </div>
+
+      <div className="p-6 space-y-4">
         {applications.length === 0 && (
-          <p className="text-slate-500">No applications yet.</p>
+          <p className="text-slate-500 text-base py-2">No applications yet.</p>
         )}
         {applications.map((app) => {
-          const existingReview = reviews.find((r) => r.applicationId === app._id);
+          const bundle = reviewBundles[app._id];
           return (
             <div
               key={app._id}
-              className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3"
+              className="p-5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-3"
             >
-              <div className="flex justify-between gap-4">
-                <div>
-                  <h4 className="font-bold text-lg">{app.job.title}</h4>
-                  <p className="text-slate-500 text-sm">
-                    {app.job.companyName} • Applied on{" "}
+              <div className="flex justify-between items-start gap-3">
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-xl text-slate-900 leading-snug">
+                    {app.job.title}
+                  </h4>
+                  <p className="text-slate-500 text-base mt-1">
+                    {app.job.companyName} · Applied{" "}
                     {new Date(app.appliedDate).toLocaleDateString()}
                   </p>
                 </div>
                 <span
-                  className={`px-3 h-7 rounded-lg text-sm font-bold flex items-center ${
+                  className={`shrink-0 px-3 py-1 rounded-lg text-sm font-medium tracking-wide uppercase ${
                     app.status === "shortlisted"
-                      ? "bg-emerald-100 text-emerald-600"
-                      : "bg-amber-100 text-amber-600"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-amber-50 text-amber-700"
                   }`}
                 >
-                  {app.status.toUpperCase()}
+                  {app.status}
                 </span>
               </div>
 
               {app.interview && (
-                <div className="bg-white p-4 rounded-xl border border-emerald-100 text-sm space-y-1">
-                  <p className="font-semibold text-slate-700 flex items-center gap-2">
-                    <Calendar size={16} className="text-[#00BC7D]" /> Interview
+                <div className="bg-white p-4 rounded-lg border border-slate-100 text-base space-y-1">
+                  <p className="font-medium text-slate-700 flex items-center gap-2">
+                    <Calendar size={18} className="text-[#3BA59C]" /> Interview
                   </p>
-                  <p>{app.interview.interviewDate} at {app.interview.interviewTime}</p>
+                  <p className="text-slate-500">
+                    {app.interview.interviewDate} at {app.interview.interviewTime}
+                  </p>
                   <a
                     href={app.interview.interviewLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#00BC7D] flex items-center gap-1 hover:underline"
+                    className="text-[#3BA59C] flex items-center gap-1 hover:underline break-all"
                   >
-                    <LinkIcon size={14} /> {app.interview.interviewLink}
+                    <LinkIcon size={16} /> {app.interview.interviewLink}
                   </a>
                 </div>
               )}
 
               {app.status === "shortlisted" && (
-                <div className="bg-white p-4 rounded-xl border border-slate-100">
-                  <p className="font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                    <MessageSquare size={16} className="text-[#00BC7D]" />
-                    Seeker Review
-                  </p>
-                  {existingReview ? (
-                    <p className="text-slate-600 text-sm">{existingReview.comment}</p>
-                  ) : (
-                    <>
-                      <Input.TextArea
-                        rows={3}
-                        placeholder="Write your review about the interview experience..."
-                        value={reviewDrafts[app._id] || ""}
-                        onChange={(e) =>
-                          setReviewDrafts((prev) => ({
-                            ...prev,
-                            [app._id]: e.target.value,
-                          }))
-                        }
-                      />
-                      <Button
-                        className="mt-2 bg-[#00BC7D] text-white"
-                        loading={submittingId === app._id}
-                        onClick={() => submitReview(app._id)}
-                      >
-                        Submit Seeker Review
-                      </Button>
-                    </>
-                  )}
+                <div className="bg-white p-4 rounded-lg border border-slate-100 space-y-4">
+                  <div>
+                    <p className="font-medium text-slate-700 text-base mb-2 flex items-center gap-2">
+                      <MessageSquare size={18} className="text-[#3BA59C]" />
+                      Your review of the employer
+                    </p>
+                    {bundle?.hasMyReview && bundle.myReview ? (
+                      <p className="text-slate-600 text-base leading-relaxed">{bundle.myReview.comment}</p>
+                    ) : (
+                      <>
+                        <Input.TextArea
+                          rows={3}
+                          placeholder="Share your interview / hiring experience…"
+                          className="text-base"
+                          value={reviewDrafts[app._id] || ""}
+                          onChange={(e) =>
+                            setReviewDrafts((prev) => ({
+                              ...prev,
+                              [app._id]: e.target.value,
+                            }))
+                          }
+                        />
+                        <Button
+                          className="mt-2 bg-[#3BA59C] text-white border-none text-base"
+                          size="large"
+                          loading={submittingId === app._id}
+                          onClick={() => submitReview(app._id)}
+                        >
+                          Submit Review
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-3">
+                    <p className="font-medium text-slate-700 text-base mb-2">
+                      {bundle?.counterpartLabel || "Employer review about you"}
+                    </p>
+                    {bundle?.canSeeCounterpart && bundle.counterpartReview ? (
+                      <p className="text-slate-600 text-base leading-relaxed bg-[#E6F4F2]/50 rounded-lg p-3">
+                        {bundle.counterpartReview.comment}
+                      </p>
+                    ) : (
+                      <p className="text-slate-400 text-sm flex items-start gap-2">
+                        <Lock size={16} className="mt-0.5 shrink-0" />
+                        {bundle?.hasMyReview
+                          ? "The employer has not left a review for you yet."
+                          : bundle?.unlockHint ||
+                            "Submit your review to unlock the employer’s review of you (if they left one)."}
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

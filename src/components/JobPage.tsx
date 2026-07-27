@@ -1,5 +1,5 @@
 import { useEffect, useState ,useCallback} from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/axiosInstance";
 import { Briefcase, Clock, Wallet, MapPin, Search } from "lucide-react";
 import Skeleton_component from "./Skeleton/Skeleton";
@@ -16,12 +16,20 @@ interface Job {
 
 const JobPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
-  // State for Search
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  // State for Search — seeded from hero /jobs?search=
+  const [searchTerm, setSearchTerm] = useState<string>(
+    () => searchParams.get("search") || ""
+  );
+
+  useEffect(() => {
+    const fromUrl = searchParams.get("search") || "";
+    setSearchTerm(fromUrl);
+  }, [searchParams]);
 
   const fetchJobs = useCallback(async (query: string, signal?: AbortSignal) => {
     setLoading(true);
@@ -74,7 +82,7 @@ const JobPage = () => {
           Find Your Dream Job
         </h2>
         <p className="text-slate-500 max-w-lg mx-auto mb-8">
-          Search for roles using AI-powered semantic search. Just describe what you're looking for!
+          Search by job title, skill, company, or location — results come from live JobPortal listings.
         </p>
 
         {/* --- SEARCH BAR (AS PER IMAGE DESIGN) --- */}

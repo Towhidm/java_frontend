@@ -9,22 +9,22 @@ const ContactUs = () => {
     {
       icon: <Phone className="text-emerald-500 w-6 h-6" />,
       title: "Call for inquiry",
-      value: "+257 388-6895",
+      value: "+880 1XXX-XXXXXX (demo)",
     },
     {
       icon: <Mail className="text-emerald-500 w-6 h-6" />,
       title: "Send us email",
-      value: "kramulous@sbcglobal.net",
+      value: "support@jobportal.local (demo)",
     },
     {
       icon: <Clock className="text-emerald-500 w-6 h-6" />,
       title: "Opening hours",
-      value: "Mon - Fri: 10AM - 10PM",
+      value: "Mon - Fri: 10AM - 6PM",
     },
     {
       icon: <MapPin className="text-emerald-500 w-6 h-6" />,
       title: "Office",
-      value: "19 North Road Piscataway, NY 08854",
+      value: "Dhaka, Bangladesh (demo address)",
     },
   ];
 
@@ -32,7 +32,7 @@ const ContactUs = () => {
     <div className="bg-white min-h-screen font-sans">
       {/* --- Page Header --- */}
       <div className="bg-black py-20 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-white">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">
           Contact Us
         </h1>
       </div>
@@ -41,13 +41,11 @@ const ContactUs = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* --- Left Column: Content & Details --- */}
           <div>
-            <h2 className="text-4xl font-bold leading-tight mb-6 text-center">
-              You Will Grow, You Will Succeed. We Promise That
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-6 text-center">
+              Questions about JobPortal?
             </h2>
             <p className="text-gray-500 mb-12 text-lg text-center">
-              Pellentesque arcu facilisis nunc mi proin. Dignissim mattis in
-              lectus tincidunt tincidunt ultrices. Diam convallis morbi
-              pellentesque adipiscing.
+              Reach out about accounts, applications, or posting jobs. Contact details below are sample/demo placeholders for this project.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-6">
@@ -70,7 +68,7 @@ const ContactUs = () => {
               Contact Info
             </h3>
             <p className="text-center text-gray-500 mb-8 text-sm">
-              Nibh dis faucibus proin lacus tristique
+              Form is UI-only for now — it does not send messages yet.
             </p>
 
             <form className="space-y-6">

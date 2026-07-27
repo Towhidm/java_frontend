@@ -2,10 +2,12 @@ import { Card, Upload, Button, message, Typography, Input } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { api } from "../api/axiosInstance";
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
+const MAX_CV_BYTES = 25 * 1024 * 1024; // 25 MB
 
 const ApplyJob = () => {
   const { jobId } = useParams();
@@ -17,7 +19,11 @@ const ApplyJob = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      message.error("Please upload your CV");
+      message.error("Please upload a CV PDF for this application");
+      return;
+    }
+    if (file.size > MAX_CV_BYTES) {
+      message.error("CV file is too large. Please upload a PDF under 25 MB.");
       return;
     }
 
@@ -37,11 +43,19 @@ const ApplyJob = () => {
         },
       });
 
-      message.success(res.data.message);
-      navigate("/jobs");
+      message.success(res.data.message || "Application submitted successfully");
+      navigate("/profile");
     } catch (error: any) {
       const err = error.response?.data;
-      message.error(err?.message || "Application failed");
+      let msg = "Application failed";
+      if (typeof err === "string") {
+        msg = err;
+      } else if (err?.message) {
+        msg = err.message;
+      } else if (error.response?.status === 413) {
+        msg = "CV file is too large. Please upload a PDF under 25 MB.";
+      }
+      message.error(msg);
     } finally {
       setLoading(false);
     }
@@ -70,25 +84,41 @@ const ApplyJob = () => {
         </Title>
 
         <Text type="secondary">
-          Upload your CV (PDF) and optionally add a cover letter.
+          Upload a CV PDF for this application only. The employer for this job can view it — not the public.
+          Your{" "}
+          <Link to="/profile" style={{ color: "#309689" }}>
+            profile resume
+          </Link>{" "}
+          stays separate and public on your seeker profile.
         </Text>
 
-        <div style={{ marginTop: 30 }}>
+        <div style={{ marginTop: 24 }}>
           <Upload
-            beforeUpload={(file) => {
-              if (file.type !== "application/pdf") {
+            beforeUpload={(selected) => {
+              if (selected.type !== "application/pdf") {
                 message.error("Only PDF files allowed");
                 return Upload.LIST_IGNORE;
               }
-
-              setFile(file);
+              if (selected.size > MAX_CV_BYTES) {
+                message.error("CV file is too large. Please upload a PDF under 25 MB.");
+                return Upload.LIST_IGNORE;
+              }
+              setFile(selected);
               return false;
             }}
             maxCount={1}
+            onRemove={() => setFile(null)}
           >
-            <Button icon={<UploadOutlined />}>Select CV (PDF)</Button>
+            <Button icon={<UploadOutlined />}>Upload CV for this application (PDF)</Button>
           </Upload>
-        </div>
+          {file && (
+            <Text style={{ display: "block", marginTop: 8 }} type="success">
+              Selected: {file.name} ({(file.size / (1024 * 1024)).toFixed(1)} MB)
+            </Text>
+          )}
+          <Text type="secondary" style={{ display: "block", marginTop: 8, fontSize: 12 }}>
+            Max size 25 MB. If you already applied to this job, you cannot apply again.
+          </Text>        </div>
 
         <div style={{ marginTop: 24 }}>
           <Text strong>Cover Letter</Text>

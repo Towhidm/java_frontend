@@ -13,7 +13,7 @@ export const LoginPage = () => {
   const navigate = useNavigate(); 
   useEffect(()=>{
     if(user){
-      navigate("/");
+      navigate("/profile");
     }
   },[user,navigate])
 
@@ -21,12 +21,9 @@ export const LoginPage = () => {
     setLoading(true);
     try {
       const response = await loginUser(values);
-
-      
       login(response.data.user);
       message.success("Login successful!");
-      console.log("Login succeeded", response.data.user);
-      
+      navigate("/profile");
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Login failed";
       message.error(errorMsg);

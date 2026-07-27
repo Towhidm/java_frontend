@@ -56,7 +56,7 @@ const Jobs = () => {
           Recent Jobs Available
         </h2>
         <p className="text-slate-500 max-w-lg mx-auto">
-          At eu lobortis  amet lacus ut a...
+          Latest openings posted by employers on JobPortal. Open a role to apply with your resume.
         </p>
         
         <div className="mt-7 "><Link to ="/jobs" className="text-[#3BA59C]   font-medium border-b-2 border-[#3BA59C] ">All Jobs</Link></div>

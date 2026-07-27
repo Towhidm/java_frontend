@@ -8,28 +8,30 @@ import {
   Plus,
   ArrowRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { blogPosts } from "../data/blogPosts";
 
 const AboutUs = () => {
   const steps = [
     {
       icon: <UserPlus className="w-8 h-8 text-emerald-500" />,
       title: "Create Account",
-      desc: "Sign up and set up your professional profile in minutes.",
+      desc: "Register with name, email, password, and choose Job Seeker or Employer.",
     },
     {
       icon: <Search className="w-8 h-8 text-emerald-500" />,
-      title: "Find Jobs",
-      desc: "Discover opportunities that match your expertise and goals.",
+      title: "Complete Profile",
+      desc: "Seekers add education, skills, and resume. Employers add company details.",
     },
     {
       icon: <Briefcase className="w-8 h-8 text-emerald-500" />,
-      title: "Apply Job",
-      desc: "Submit your application to top companies with one click.",
+      title: "Post or Apply",
+      desc: "Employers post jobs with required skills. Seekers apply with PDF and cover letter.",
     },
     {
       icon: <FileUp className="w-8 h-8 text-emerald-500" />,
-      title: "Upload Resume",
-      desc: "Showcase your skills by uploading your latest CV or Portfolio.",
+      title: "Interview & Review",
+      desc: "Shortlist applicants, schedule interviews, and leave seeker or employer reviews.",
     },
   ];
 
@@ -38,62 +40,68 @@ const AboutUs = () => {
       id: "01",
       question: "Can I upload a CV?",
       answer:
-        "Yes, you can upload multiple versions of your CV in PDF or Docx format.",
+        "Yes. Job seekers upload a PDF resume on the Profile page. It is stored on the server and can be reused when applying, or you can upload a new PDF per application.",
     },
     {
       id: "02",
-      question: "How long will the recruitment process take?",
+      question: "Do I need a company profile to post jobs?",
       answer:
-        "Timelines vary by company, but typically range from 1 to 4 weeks.",
-    },
-    {
-      id: "04",
-      question: "Do you recruit for Graduates, Apprentices and Students?",
-      answer:
-        "Absolutely! We have dedicated filters for entry-level and internship roles.",
+        "Yes. Employers must complete company name, location, and details before posting a job.",
     },
     {
       id: "03",
-      question: "What does the recruitment and selection process involve?",
+      question: "How does shortlisting and interviews work?",
       answer:
-        "Usually involves screening, technical assessments, and interviews.",
+        "Employers view applicants, shortlist them, then schedule an interview with date, time, and a meeting link. Seekers see this under My Applications.",
     },
+    {
+      id: "04",
+      question: "Are category filters available yet?",
+      answer:
+        "Browse-by-category cards are marked Upcoming. For now, search all jobs from the Jobs page or the home search bar.",
+    },
+  ];
+
+  const highlightCards = [
+    "Register once, then finish your role-specific profile on the dashboard.",
+    "Live counts on the homepage reflect jobs, seekers, and companies in your database.",
+    "Applications, interviews, and reviews follow JobPortal’s normalized data model.",
   ];
 
   return (
     <div className="bg-white text-slate-900 overflow-x-hidden">
       <div className="bg-black py-20 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-white">
-          About Us
-        </h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-white">About JobPortal</h1>
+        <p className="text-slate-400 mt-4 max-w-xl mx-auto px-4">
+          A full-stack job board for seekers and employers — profiles, applications, interviews, and reviews.
+        </p>
       </div>
-      {/* --- Section 1: Intro --- */}
+
       <section className="py-20 px-6 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-            Et nunc ut tempus duis nisi sed massa
+          <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+            Connect talent with hiring teams in one workflow
           </h1>
           <p className="text-gray-500 text-lg leading-relaxed">
-            Our platform bridges the gap between ambitious talent and
-            industry-leading companies. We provide the tools you need to
-            navigate your career path with confidence and ease.
+            JobPortal lets employers create company profiles and post openings with required skills.
+            Job seekers upload resumes, apply with a cover letter, track pending or shortlisted status,
+            join scheduled interviews, and share reviews — all backed by your MySQL database.
           </p>
         </div>
         <div className="relative w-full h-112.5 rounded-3xl overflow-hidden shadow-xl">
           <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
-            alt="Office Team"
+            alt="Team collaborating"
             className="w-full h-full object-cover"
           />
         </div>
       </section>
 
-      {/* --- Section 2: How It Works --- */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-3">How it works</h2>
           <p className="text-gray-500 mb-16">
-            Follow these simple steps to get started
+            Four steps matching how this project is built
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
@@ -104,87 +112,67 @@ const AboutUs = () => {
                 <div className="mb-6 flex justify-center transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-3">
                   {step.icon}
                 </div>
-
                 <h3 className="text-xl font-bold mb-3 transition-colors duration-300 group-hover:text-emerald-600">
                   {step.title}
                 </h3>
-
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  {step.desc}
-                </p>
+                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- Section 3: Video CTA --- */}
       <section className="py-20 px-6 max-w-7xl mx-auto">
         <div className="relative rounded-[40px] overflow-hidden">
-          {/* Upper Video/Image Container */}
           <div className="relative h-100 md:h-137.5 flex flex-col items-center justify-center">
             <img
               src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=1200"
               className="absolute inset-0 w-full h-full object-cover brightness-[0.4]"
               alt="Workspace"
             />
-
-            {/* Play Button and Heading */}
             <div className="relative z-10 text-center text-white px-4 pb-20 md:pb-0">
-              <button className="w-16 h-16 md:w-20 md:h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-6 mx-auto hover:scale-110 transition-transform shadow-lg">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
                 <Play fill="white" size={24} className="ml-1" />
-              </button>
+              </div>
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Good Life Begins With
-                <br />A Good Company
+                Hire Smarter.
+                <br />
+                Apply with Confidence.
               </h2>
+              <p className="text-slate-300 mt-4 text-sm">(Illustration — no video yet)</p>
             </div>
 
-            {/* DESKTOP VIEW: Floating Numbered Cards (Hidden on Mobile) */}
             <div className="hidden md:flex absolute bottom-4 left-0 w-full px-8 justify-center gap-4 lg:gap-6 z-20">
-              {[1, 2, 3].map((num) => (
+              {highlightCards.map((text, idx) => (
                 <div
-                  key={num}
+                  key={idx}
                   className="bg-black/40 backdrop-blur-xl border border-white/10 p-6 rounded-2xl w-full max-w-[320px] flex items-start gap-4"
                 >
                   <div className="bg-emerald-500/20 text-emerald-400 w-10 h-10 rounded-lg flex items-center justify-center font-bold shrink-0">
-                    {num}
+                    {idx + 1}
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium leading-relaxed">
-                      {num === 1 &&
-                        "Elit gravida lorem amet porta risus vitae at"}
-                      {num === 2 && "Volutpat dui lacus mattis urna platea..."}
-                      {num === 3 &&
-                        "Elementum faucibus netus gravida lacus lorem"}
-                    </p>
-                    <button className="text-emerald-400 text-xs font-bold mt-2 hover:underline">
-                      Learn more
-                    </button>
+                    <p className="text-white text-sm font-medium leading-relaxed">{text}</p>
+                    <Link to="/register" className="text-emerald-400 text-xs font-bold mt-2 hover:underline inline-block">
+                      Get started
+                    </Link>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* MOBILE VIEW: Solid Black Bottom Section (Hidden on Desktop) */}
           <div className="md:hidden bg-black p-8 space-y-8">
-            {[1, 2, 3].map((num) => (
-              <div key={num} className="flex items-start gap-4">
+            {highlightCards.map((text, idx) => (
+              <div key={idx} className="flex items-start gap-4">
                 <div className="bg-emerald-500/20 text-emerald-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold shrink-0">
-                  {num}
+                  {idx + 1}
                 </div>
                 <div>
-                  <p className="text-white text-sm font-medium">
-                    {num === 1 &&
-                      "Elit gravida lorem amet porta risus vitae at"}
-                    {num === 2 && "Volutpat dui lacus mattis urna platea..."}
-                    {num === 3 &&
-                      "Elementum faucibus netus gravida lacus lorem"}
-                  </p>
-                  <button className="text-emerald-500 text-xs font-bold mt-1">
-                    Learn more
-                  </button>
+                  <p className="text-white text-sm font-medium">{text}</p>
+                  <Link to="/register" className="text-emerald-500 text-xs font-bold mt-1 inline-block">
+                    Get started
+                  </Link>
                 </div>
               </div>
             ))}
@@ -192,39 +180,35 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* --- Section 4: FAQs --- */}
       <section className="py-20 px-6 max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
           Frequently Asked Questions
         </h2>
         <p className="text-center text-gray-500 mb-16">
-          Quick answers to common questions
+          Answers based on how JobPortal works today
         </p>
         <div className="space-y-4">
           {faqs.map((faq) => (
-            <div
+            <details
               key={faq.id}
-              className="border border-slate-200 rounded-2xl p-6 hover:bg-emerald-50/50 transition cursor-pointer group"
+              className="border border-slate-200 rounded-2xl p-6 hover:bg-emerald-50/50 transition group"
             >
-              <div className="flex items-center gap-6">
-                <span className="text-emerald-500 font-bold text-lg">
-                  {faq.id}
-                </span>
+              <summary className="flex items-center gap-6 cursor-pointer list-none">
+                <span className="text-emerald-500 font-bold text-lg">{faq.id}</span>
                 <h3 className="font-semibold text-lg flex-1 group-hover:text-emerald-700">
                   {faq.question}
                 </h3>
                 <div className="w-8 h-8 rounded-full border flex items-center justify-center text-gray-400 group-hover:border-emerald-500 group-hover:text-emerald-500">
                   <Plus size={18} />
                 </div>
-              </div>
-            </div>
+              </summary>
+              <p className="mt-4 pl-14 text-slate-500 text-sm leading-relaxed">{faq.answer}</p>
+            </details>
           ))}
         </div>
       </section>
 
-      {/* --- Section 5: Features (The Collage Layout) --- */}
       <section className="py-20 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-        {/* Overlapping Image Grid */}
         <div className="relative h-112.5 w-full">
           <img
             src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400"
@@ -244,77 +228,57 @@ const AboutUs = () => {
         </div>
 
         <div>
-          <h2 className="text-4xl font-bold mb-6">
-            We're Only Working With The Best
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">What JobPortal Delivers</h2>
           <p className="text-gray-500 mb-10 text-lg">
-            We partner with Fortune 500 companies and innovative startups to
-            ensure your career move is a step forward in the right direction.
+            Real hiring flows for this project — not placeholder marketing claims.
           </p>
           <div className="grid grid-cols-2 gap-y-6">
             <div className="flex items-center gap-3 font-semibold">
-              <CheckCircle2 className="text-emerald-500" /> Quality Job
+              <CheckCircle2 className="text-emerald-500" /> Live job listings
             </div>
             <div className="flex items-center gap-3 font-semibold">
-              <CheckCircle2 className="text-emerald-500" /> Top Companies
+              <CheckCircle2 className="text-emerald-500" /> Company profiles
             </div>
             <div className="flex items-center gap-3 font-semibold">
-              <CheckCircle2 className="text-emerald-500" /> Top Talents
+              <CheckCircle2 className="text-emerald-500" /> Resume applications
             </div>
             <div className="flex items-center gap-3 font-semibold">
-              <CheckCircle2 className="text-emerald-500" /> Verified Profiles
+              <CheckCircle2 className="text-emerald-500" /> Interviews & reviews
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- Section 6: Blog (Dynamic Images) --- */}
       <section className="py-20 px-6 max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-16">News and Blog</h2>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold">Guides & Blog</h2>
+          <Link to="/blog" className="text-emerald-600 font-bold hover:underline">
+            View all articles
+          </Link>
+        </div>
         <div className="grid md:grid-cols-2 gap-10">
-          {/* Blog Post 1 */}
-          <div className="group cursor-pointer">
-            <div className="rounded-4xl overflow-hidden mb-6 h-72 shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"
-                alt="Workplace Morale"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div className="flex gap-3 mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-4 py-1 rounded-full">
-                News
+          {blogPosts.map((post) => (
+            <Link key={post.id} to={`/blog/${post.slug}`} className="group block">
+              <div className="rounded-4xl overflow-hidden mb-6 h-72 shadow-lg">
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="flex gap-3 mb-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-4 py-1 rounded-full">
+                  {post.category}
+                </span>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4 group-hover:text-emerald-600 transition-colors">
+                {post.title}
+              </h3>
+              <span className="flex items-center text-emerald-600 font-bold gap-2">
+                Read More <ArrowRight size={18} />
               </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4 group-hover:text-emerald-600 transition-colors">
-              Revitalizing Workplace Morale: Innovative Tactics for 2024
-            </h3>
-            <button className="flex items-center text-emerald-600 font-bold gap-2">
-              Read More <ArrowRight size={18} />
-            </button>
-          </div>
-
-          {/* Blog Post 2 */}
-          <div className="group cursor-pointer">
-            <div className="rounded-4xl overflow-hidden mb-6 h-72 shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800"
-                alt="Interview Tips"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            <div className="flex gap-3 mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-4 py-1 rounded-full">
-                Blog
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4 group-hover:text-emerald-600 transition-colors">
-              How To Avoid The Top Six Most Common Job Interview Mistakes
-            </h3>
-            <button className="flex items-center text-emerald-600 font-bold gap-2">
-              Read More <ArrowRight size={18} />
-            </button>
-          </div>
+            </Link>
+          ))}
         </div>
       </section>
     </div>

@@ -1,16 +1,19 @@
 import { Form, Input, Button, Select, Card, message } from "antd";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api/axiosInstance";
 
 const { Option } = Select;
 
 const CreateJob = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
     try {
       const res = await api.post("/jobs/create-job", values);
-      message.success(res.data.message);
+      message.success(res.data.message || "Job created successfully");
       form.resetFields();
+      navigate("/profile");
     } catch (error: any) {
       const err = error.response?.data;
 
@@ -44,6 +47,9 @@ const CreateJob = () => {
           border: "1px solid #309689",
         }}
       >
+        <p style={{ marginBottom: 20, color: "#64748b" }}>
+          Company info comes from your <strong>Employer Profile</strong>. Complete that first.
+        </p>
         <Form layout="vertical" form={form} onFinish={onFinish}>
           <Form.Item
             label="Job Title"
@@ -51,26 +57,6 @@ const CreateJob = () => {
             rules={[{ required: true, message: "Job title required" }]}
           >
             <Input placeholder="Backend Developer" />
-          </Form.Item>
-
-          <Form.Item
-            label="Company Name"
-            name="companyName"
-            rules={[{ required: true, message: "Company name required" }]}
-          >
-            <Input placeholder="TechBD" />
-          </Form.Item>
-
-          <Form.Item
-            label="Company Location"
-            name="companyLocation"
-            rules={[{ required: true, message: "Company location required" }]}
-          >
-            <Input placeholder="Dhaka" />
-          </Form.Item>
-
-          <Form.Item label="Company Details" name="companyDetails">
-            <Input.TextArea rows={2} placeholder="IT Software Hub" />
           </Form.Item>
 
           <Form.Item

@@ -11,23 +11,17 @@ type RegisterData = {
   email: string;
   password: string;
   role: "EMPLOYER" | "JOBSEEKER";
-  companyName?: string;
-  companyLocation?: string;
-  companyDetails?: string;
-  education?: string;
-  skills?: string[];
 };
 
 export default function RegisterForm() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState<"EMPLOYER" | "JOBSEEKER">("EMPLOYER");
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading && user) {
-      navigate("/");
+      navigate("/profile");
     }
   }, [user, navigate, isLoading]);
 
@@ -62,9 +56,12 @@ export default function RegisterForm() {
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#EBF5F4] py-10">
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-white">
-        <h2 className="text-3xl font-bold mb-6 text-[#000000] text-center">
+        <h2 className="text-3xl font-bold mb-2 text-[#000000] text-center">
           Register
         </h2>
+        <p className="text-center text-slate-500 text-sm mb-6">
+          After login, complete your profile details.
+        </p>
 
         <Form
           form={form}
@@ -106,44 +103,11 @@ export default function RegisterForm() {
           </Form.Item>
 
           <Form.Item label="Role" name="role">
-            <Select onChange={(value) => setRole(value)}>
+            <Select>
               <Option value="EMPLOYER">Employer</Option>
               <Option value="JOBSEEKER">Job Seeker</Option>
             </Select>
           </Form.Item>
-
-          {role === "EMPLOYER" && (
-            <>
-              <Form.Item
-                label="Company Name"
-                name="companyName"
-                rules={[{ required: true, message: "Company name required" }]}
-              >
-                <Input placeholder="TechBD" />
-              </Form.Item>
-              <Form.Item
-                label="Company Location"
-                name="companyLocation"
-                rules={[{ required: true, message: "Company location required" }]}
-              >
-                <Input placeholder="Dhaka" />
-              </Form.Item>
-              <Form.Item label="Company Details" name="companyDetails">
-                <Input.TextArea rows={2} placeholder="IT Software Hub" />
-              </Form.Item>
-            </>
-          )}
-
-          {role === "JOBSEEKER" && (
-            <>
-              <Form.Item label="Education" name="education">
-                <Input placeholder="CUET / BUET" />
-              </Form.Item>
-              <Form.Item label="Skills" name="skills">
-                <Select mode="tags" placeholder="Java, React, Spring Boot" />
-              </Form.Item>
-            </>
-          )}
 
           <Form.Item>
             <Button

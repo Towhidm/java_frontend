@@ -22,6 +22,9 @@ import { ProfileDashboard } from "./components/Profile/ProfileDashboard";
 import JobApplicants from "./components/Profile/Applicants";
 import JobPage from "./components/JobPage";
 import TodosPage from "./pages/TodosPage";
+import BlogListPage from "./components/BlogListPage";
+import BlogDetailPage from "./components/BlogDetailPage";
+import PublicSeekerProfile from "./components/PublicSeekerProfile";
 function App() {
   return (
     <AuthProvider>
@@ -76,9 +79,39 @@ function App() {
             </>
           }
         />
+        <Route
+          path="/blog"
+          element={
+            <>
+              <Navbar isHomePage={false} />
+              <BlogListPage />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/blog/:slug"
+          element={
+            <>
+              <Navbar isHomePage={false} />
+              <BlogDetailPage />
+              <Footer />
+            </>
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/profile" element={<ProfileDashboard />} />
+        <Route
+          path="/seekers/:seekerId"
+          element={
+            <>
+              <Navbar isHomePage={false} />
+              <PublicSeekerProfile />
+              <Footer />
+            </>
+          }
+        />
         <Route path="/applicants/:jobId" element={<JobApplicants />} />
         <Route path="/jobpost" element={<JobPost />} />
         <Route path="jobs/apply/:jobId" element={<ApplyJob />} />
