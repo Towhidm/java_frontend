@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axiosInstance";
-import { Briefcase, Calendar, Link as LinkIcon, MessageSquare, Lock } from "lucide-react";
+import { Briefcase, Calendar, Link as LinkIcon, MessageSquare } from "lucide-react";
 import { Button, Input, message } from "antd";
+
+type AppStatus = "pending" | "shortlisted" | "approved" | "rejected";
 
 interface JobType {
   _id: string;
   title: string;
   companyName: string;
+  employer?: { _id?: string };
 }
 
 interface ApplicationType {
   _id: string;
   job: JobType;
-  status: "pending" | "shortlisted";
+  status: AppStatus;
   appliedDate: string;
   interview?: {
     interviewDate: string;
@@ -28,7 +31,22 @@ interface ReviewBundle {
   canSeeCounterpart: boolean;
   counterpartLabel: string;
   unlockHint: string;
+  approved: boolean;
+  canReview: boolean;
 }
+
+const statusClass = (status: AppStatus) => {
+  switch (status) {
+    case "approved":
+      return "bg-emerald-50 text-emerald-700";
+    case "rejected":
+      return "bg-red-50 text-red-700";
+    case "shortlisted":
+      return "bg-sky-50 text-sky-700";
+    default:
+      return "bg-amber-50 text-amber-700";
+  }
+};
 
 export const AppliedJobs = () => {
   const [applications, setApplications] = useState<ApplicationType[]>([]);
@@ -48,9 +66,9 @@ export const AppliedJobs = () => {
       const apps: ApplicationType[] = appsRes.data;
       setApplications(apps);
 
-      const shortlisted = apps.filter((a) => a.status === "shortlisted");
+      const approved = apps.filter((a) => a.status === "approved");
       const bundles = await Promise.all(
-        shortlisted.map(async (app) => {
+        approved.map(async (app) => {
           try {
             const bundle = await loadReviewBundle(app._id);
             return [app._id, bundle] as const;
@@ -84,7 +102,7 @@ export const AppliedJobs = () => {
     setSubmittingId(applicationId);
     try {
       await api.post(`/profile/seeker-review/${applicationId}`, { comment });
-      message.success("Your review was saved. You can now see the employer’s review if they left one.");
+      message.success("Public review saved");
       const bundle = await loadReviewBundle(applicationId);
       setReviewBundles((prev) => ({ ...prev, [applicationId]: bundle }));
       setReviewDrafts((prev) => ({ ...prev, [applicationId]: "" }));
@@ -130,11 +148,9 @@ export const AppliedJobs = () => {
                   </p>
                 </div>
                 <span
-                  className={`shrink-0 px-3 py-1 rounded-lg text-sm font-medium tracking-wide uppercase ${
-                    app.status === "shortlisted"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-amber-50 text-amber-700"
-                  }`}
+                  className={`shrink-0 px-3 py-1 rounded-lg text-sm font-medium tracking-wide uppercase ${statusClass(
+                    app.status
+                  )}`}
                 >
                   {app.status}
                 </span>
@@ -159,12 +175,12 @@ export const AppliedJobs = () => {
                 </div>
               )}
 
-              {app.status === "shortlisted" && (
+              {app.status === "approved" && (
                 <div className="bg-white p-4 rounded-lg border border-slate-100 space-y-4">
                   <div>
                     <p className="font-medium text-slate-700 text-base mb-2 flex items-center gap-2">
                       <MessageSquare size={18} className="text-[#3BA59C]" />
-                      Your review of the employer
+                      Your public review of the employer
                     </p>
                     {bundle?.hasMyReview && bundle.myReview ? (
                       <p className="text-slate-600 text-base leading-relaxed">{bundle.myReview.comment}</p>
@@ -172,7 +188,7 @@ export const AppliedJobs = () => {
                       <>
                         <Input.TextArea
                           rows={3}
-                          placeholder="Share your interview / hiring experience…"
+                          placeholder="Share your hiring experience (public)…"
                           className="text-base"
                           value={reviewDrafts[app._id] || ""}
                           onChange={(e) =>
@@ -188,7 +204,7 @@ export const AppliedJobs = () => {
                           loading={submittingId === app._id}
                           onClick={() => submitReview(app._id)}
                         >
-                          Submit Review
+                          Submit Public Review
                         </Button>
                       </>
                     )}
@@ -198,21 +214,23 @@ export const AppliedJobs = () => {
                     <p className="font-medium text-slate-700 text-base mb-2">
                       {bundle?.counterpartLabel || "Employer review about you"}
                     </p>
-                    {bundle?.canSeeCounterpart && bundle.counterpartReview ? (
+                    {bundle?.counterpartReview ? (
                       <p className="text-slate-600 text-base leading-relaxed bg-[#E6F4F2]/50 rounded-lg p-3">
                         {bundle.counterpartReview.comment}
                       </p>
                     ) : (
-                      <p className="text-slate-400 text-sm flex items-start gap-2">
-                        <Lock size={16} className="mt-0.5 shrink-0" />
-                        {bundle?.hasMyReview
-                          ? "The employer has not left a review for you yet."
-                          : bundle?.unlockHint ||
-                            "Submit your review to unlock the employer’s review of you (if they left one)."}
+                      <p className="text-slate-400 text-sm">
+                        No employer review yet (shown here publicly when they write one).
                       </p>
                     )}
                   </div>
                 </div>
+              )}
+
+              {app.status !== "approved" && app.status !== "rejected" && (
+                <p className="text-slate-400 text-sm">
+                  Reviews become available after the employer approves your application.
+                </p>
               )}
             </div>
           );

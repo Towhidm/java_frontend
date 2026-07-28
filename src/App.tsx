@@ -25,6 +25,7 @@ import TodosPage from "./pages/TodosPage";
 import BlogListPage from "./components/BlogListPage";
 import BlogDetailPage from "./components/BlogDetailPage";
 import PublicSeekerProfile from "./components/PublicSeekerProfile";
+import PublicEmployerProfile from "./components/PublicEmployerProfile";
 function App() {
   return (
     <AuthProvider>
@@ -108,6 +109,16 @@ function App() {
             <>
               <Navbar isHomePage={false} />
               <PublicSeekerProfile />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/employers/:employerId"
+          element={
+            <>
+              <Navbar isHomePage={false} />
+              <PublicEmployerProfile />
               <Footer />
             </>
           }

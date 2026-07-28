@@ -9,21 +9,22 @@ import {
   Loader2,
   Calendar,
   MessageSquare,
-  Lock,
+  X,
+  BadgeCheck,
 } from "lucide-react";
 import { Button, Input, Modal, message } from "antd";
 import { api } from "../../api/axiosInstance";
 
+type AppStatus = "pending" | "shortlisted" | "approved" | "rejected";
+
 interface Applicant {
   _id: string;
-  cvFile?: string;
   coverLetter?: string;
-  status: "pending" | "shortlisted";
+  status: AppStatus;
   jobSeeker: {
     _id?: string;
     name: string;
     email: string;
-    resume?: string | null;
   };
   interview?: {
     interviewDate: string;
@@ -39,7 +40,22 @@ interface ReviewBundle {
   canSeeCounterpart: boolean;
   counterpartLabel: string;
   unlockHint: string;
+  approved: boolean;
+  canReview: boolean;
 }
+
+const statusClass = (status: AppStatus) => {
+  switch (status) {
+    case "approved":
+      return "bg-emerald-100 text-emerald-700";
+    case "rejected":
+      return "bg-red-100 text-red-700";
+    case "shortlisted":
+      return "bg-sky-100 text-sky-700";
+    default:
+      return "bg-amber-100 text-amber-700";
+  }
+};
 
 const JobApplicants = () => {
   const { jobId } = useParams();
@@ -65,9 +81,9 @@ const JobApplicants = () => {
       const apps: Applicant[] = appsRes.data;
       setApplicants(apps);
 
-      const shortlisted = apps.filter((a) => a.status === "shortlisted");
+      const forReviews = apps.filter((a) => a.status === "approved");
       const bundles = await Promise.all(
-        shortlisted.map(async (app) => {
+        forReviews.map(async (app) => {
           try {
             const bundle = await loadReviewBundle(app._id);
             return [app._id, bundle] as const;
@@ -109,13 +125,11 @@ const JobApplicants = () => {
     }
   };
 
-  const handleShortlist = async (applicationId: string) => {
+  const updateStatus = async (applicationId: string, status: AppStatus) => {
     setProcessingId(applicationId);
     try {
-      await api.post(`/profile/updateApplicationStatus/${applicationId}`, {
-        status: "shortlisted",
-      });
-      message.success("Applicant shortlisted");
+      await api.post(`/profile/updateApplicationStatus/${applicationId}`, { status });
+      message.success(`Applicant marked as ${status}`);
       await loadData();
     } catch (err: any) {
       message.error(err.response?.data?.message || "Action failed");
@@ -158,7 +172,7 @@ const JobApplicants = () => {
     setProcessingId(applicationId);
     try {
       await api.post(`/profile/employer-review/${applicationId}`, { comment });
-      message.success("Your review was saved. You can now see the seeker’s review if they left one.");
+      message.success("Public review saved");
       const bundle = await loadReviewBundle(applicationId);
       setReviewBundles((prev) => ({ ...prev, [applicationId]: bundle }));
       setReviewDrafts((prev) => ({ ...prev, [applicationId]: "" }));
@@ -192,6 +206,7 @@ const JobApplicants = () => {
             {applicants.map((app) => {
               const seekerId = app.jobSeeker?._id;
               const bundle = reviewBundles[app._id];
+              const isFinal = app.status === "approved" || app.status === "rejected";
               return (
                 <div
                   key={app._id}
@@ -236,7 +251,7 @@ const JobApplicants = () => {
                               to={`/seekers/${seekerId}`}
                               className="flex items-center gap-1 text-[#00BC7D] text-base font-medium hover:underline"
                             >
-                              View public profile <ExternalLink size={12} />
+                              Public profile <ExternalLink size={12} />
                             </Link>
                           )}
                         </div>
@@ -246,24 +261,41 @@ const JobApplicants = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      {app.status === "pending" ? (
-                        <button
-                          disabled={processingId === app._id}
-                          onClick={() => handleShortlist(app._id)}
-                          className="flex items-center gap-2 bg-[#00BC7D] text-white px-5 py-2.5 rounded-xl font-medium"
-                        >
-                          <Check size={18} /> Shortlist
-                        </button>
-                      ) : (
-                        <span className="px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-medium text-sm uppercase">
-                          {app.status}
-                        </span>
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`px-4 py-2 rounded-full font-medium text-sm uppercase ${statusClass(app.status)}`}>
+                        {app.status}
+                      </span>
+                      {!isFinal && (
+                        <>
+                          {app.status === "pending" && (
+                            <button
+                              disabled={processingId === app._id}
+                              onClick={() => updateStatus(app._id, "shortlisted")}
+                              className="flex items-center gap-2 bg-sky-600 text-white px-4 py-2 rounded-xl font-medium text-sm"
+                            >
+                              <Check size={16} /> Shortlist
+                            </button>
+                          )}
+                          <button
+                            disabled={processingId === app._id}
+                            onClick={() => updateStatus(app._id, "approved")}
+                            className="flex items-center gap-2 bg-[#00BC7D] text-white px-4 py-2 rounded-xl font-medium text-sm"
+                          >
+                            <BadgeCheck size={16} /> Approve
+                          </button>
+                          <button
+                            disabled={processingId === app._id}
+                            onClick={() => updateStatus(app._id, "rejected")}
+                            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl font-medium text-sm"
+                          >
+                            <X size={16} /> Reject
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
 
-                  {app.status === "shortlisted" && (
+                  {(app.status === "shortlisted" || app.status === "approved") && (
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="bg-slate-50 p-4 rounded-xl">
                         <p className="font-medium mb-2 flex items-center gap-2 text-base">
@@ -293,15 +325,19 @@ const JobApplicants = () => {
                       <div className="bg-slate-50 p-4 rounded-xl space-y-4">
                         <div>
                           <p className="font-medium mb-2 flex items-center gap-2 text-base">
-                            <MessageSquare size={16} className="text-[#00BC7D]" /> Your review of the applicant
+                            <MessageSquare size={16} className="text-[#00BC7D]" /> Your public review
                           </p>
-                          {bundle?.hasMyReview && bundle.myReview ? (
+                          {app.status !== "approved" ? (
+                            <p className="text-slate-400 text-sm">
+                              Approve this applicant to leave a public review.
+                            </p>
+                          ) : bundle?.hasMyReview && bundle.myReview ? (
                             <p className="text-base text-slate-600">{bundle.myReview.comment}</p>
                           ) : (
                             <>
                               <Input.TextArea
                                 rows={3}
-                                placeholder="Review the candidate..."
+                                placeholder="Public review of this applicant…"
                                 value={reviewDrafts[app._id] || ""}
                                 onChange={(e) =>
                                   setReviewDrafts((prev) => ({ ...prev, [app._id]: e.target.value }))
@@ -312,30 +348,26 @@ const JobApplicants = () => {
                                 loading={processingId === app._id}
                                 onClick={() => submitEmployerReview(app._id)}
                               >
-                                Submit Employer Review
+                                Submit Public Review
                               </Button>
                             </>
                           )}
                         </div>
 
-                        <div className="border-t border-slate-200 pt-3">
-                          <p className="font-medium text-base mb-2">
-                            {bundle?.counterpartLabel || "Job seeker review"}
-                          </p>
-                          {bundle?.canSeeCounterpart && bundle.counterpartReview ? (
-                            <p className="text-base text-slate-600 bg-white rounded-lg p-3">
-                              {bundle.counterpartReview.comment}
+                        {app.status === "approved" && (
+                          <div className="border-t border-slate-200 pt-3">
+                            <p className="font-medium text-base mb-2">
+                              {bundle?.counterpartLabel || "Job seeker review"}
                             </p>
-                          ) : (
-                            <p className="text-slate-400 text-sm flex items-start gap-2">
-                              <Lock size={16} className="mt-0.5 shrink-0" />
-                              {bundle?.hasMyReview
-                                ? "This applicant has not left a review yet."
-                                : bundle?.unlockHint ||
-                                  "Submit your review to unlock this applicant’s review (if they left one)."}
-                            </p>
-                          )}
-                        </div>
+                            {bundle?.counterpartReview ? (
+                              <p className="text-base text-slate-600 bg-white rounded-lg p-3">
+                                {bundle.counterpartReview.comment}
+                              </p>
+                            ) : (
+                              <p className="text-slate-400 text-sm">No seeker review yet (public when written).</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

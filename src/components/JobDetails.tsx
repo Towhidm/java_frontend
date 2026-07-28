@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/axiosInstance";
 import Skeleton_component from "./Skeleton/Skeleton";
 import { useAuth } from "../context/AuthContext";
@@ -31,6 +31,7 @@ interface Job {
   salary: string;
   degree?: string;
   qualification?: string;
+  employer?: { _id?: string };
 }
 
 interface CompanyReview {
@@ -83,6 +84,7 @@ const JobDetails = () => {
     );
 
   const canApply = user?.role === "JOBSEEKER";
+  const employerId = job.employer?._id;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 bg-white">
@@ -98,7 +100,16 @@ const JobDetails = () => {
             <h1 className="text-lg md:text-xl font-semibold text-slate-900 mt-2 leading-snug">
               {job.title}
             </h1>
-            <p className="text-slate-500 text-sm mt-1">{job.companyName}</p>
+            {employerId ? (
+              <Link
+                to={`/employers/${employerId}`}
+                className="text-slate-500 text-sm mt-1 inline-block hover:text-[#3BA59C] hover:underline"
+              >
+                {job.companyName} — view company reviews
+              </Link>
+            ) : (
+              <p className="text-slate-500 text-sm mt-1">{job.companyName}</p>
+            )}
             <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4">
               <InfoItem icon={<Briefcase size={16} />} text={job.category} />
               <InfoItem icon={<Clock size={16} />} text={job.jobType} />

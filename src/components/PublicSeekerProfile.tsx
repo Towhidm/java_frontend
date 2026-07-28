@@ -1,7 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FileText, GraduationCap, Mail, User, ExternalLink } from "lucide-react";
+import { FileText, GraduationCap, Mail, User, ExternalLink, MessageSquare, Building2 } from "lucide-react";
 import { api } from "../api/axiosInstance";
+
+interface EmployerReviewItem {
+  _id: string;
+  comment: string;
+  employerName?: string;
+  companyName?: string | null;
+}
+
+interface SeekerReviewItem {
+  _id: string;
+  comment: string;
+}
 
 interface PublicSeeker {
   _id: string;
@@ -10,6 +22,8 @@ interface PublicSeeker {
   education?: string;
   skills: string[];
   resume?: string | null;
+  employerReviews?: EmployerReviewItem[];
+  seekerReviews?: SeekerReviewItem[];
 }
 
 const PublicSeekerProfile = () => {
@@ -63,7 +77,7 @@ const PublicSeekerProfile = () => {
               Public job seeker profile
             </p>
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900">{profile.name}</h1>
-            <p className="text-slate-500 text-sm flex items-center gap-1.5 mt-1">
+            <p className="text-slate-500 text-base flex items-center gap-1.5 mt-1">
               <Mail size={14} /> {profile.email}
             </p>
           </div>
@@ -71,48 +85,86 @@ const PublicSeekerProfile = () => {
 
         <div className="p-6 space-y-6">
           <div>
-            <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2 mb-2">
+            <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2 mb-2">
               <GraduationCap size={16} className="text-[#3BA59C]" /> Education
             </h2>
-            <p className="text-slate-600">{profile.education || "Not provided"}</p>
+            <p className="text-slate-600 text-base">{profile.education || "Not provided"}</p>
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-slate-700 mb-2">Skills</h2>
+            <h2 className="text-base font-semibold text-slate-700 mb-2">Skills</h2>
             {profile.skills?.length ? (
               <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="bg-[#E6F4F2] text-[#2d817a] text-xs font-semibold px-3 py-1 rounded-md"
+                    className="bg-[#E6F4F2] text-[#2d817a] text-sm font-medium px-3 py-1 rounded-md"
                   >
                     {skill}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500 text-sm">No skills listed</p>
+              <p className="text-slate-500 text-base">No skills listed</p>
             )}
           </div>
 
           <div className="rounded-lg border border-slate-100 bg-slate-50 p-5">
-            <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2 mb-2">
+            <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2 mb-2">
               <FileText size={16} className="text-[#3BA59C]" /> Public resume
             </h2>
-            <p className="text-slate-500 text-xs mb-3">
-              This resume is part of the public profile. Application CVs uploaded when applying to a job are private to that employer.
-            </p>
             {profile.resume ? (
               <a
                 href={profile.resume}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 text-[#3BA59C] font-semibold text-sm hover:underline"
+                className="inline-flex items-center gap-2 text-[#3BA59C] font-medium text-base hover:underline"
               >
                 View resume PDF <ExternalLink size={14} />
               </a>
             ) : (
-              <p className="text-amber-700 text-sm">No public resume uploaded yet.</p>
+              <p className="text-amber-700 text-base">No public resume uploaded yet.</p>
+            )}
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2 mb-3">
+              <Building2 size={16} className="text-[#3BA59C]" /> Reviews from employers
+            </h2>
+            <p className="text-slate-500 text-sm mb-3">
+              Public feedback left by employers after approving this applicant.
+            </p>
+            {profile.employerReviews?.length ? (
+              <ul className="space-y-3">
+                {profile.employerReviews.map((review) => (
+                  <li key={review._id} className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                    <p className="text-slate-700 text-base leading-relaxed">“{review.comment}”</p>
+                    <p className="text-slate-400 text-sm mt-2">
+                      — {review.employerName}
+                      {review.companyName ? ` · ${review.companyName}` : ""}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-slate-400 text-base">No employer reviews yet.</p>
+            )}
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2 mb-3">
+              <MessageSquare size={16} className="text-[#3BA59C]" /> Reviews written by this seeker
+            </h2>
+            {profile.seekerReviews?.length ? (
+              <ul className="space-y-3">
+                {profile.seekerReviews.map((review) => (
+                  <li key={review._id} className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                    <p className="text-slate-700 text-base leading-relaxed">“{review.comment}”</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-slate-400 text-base">No reviews written yet.</p>
             )}
           </div>
         </div>

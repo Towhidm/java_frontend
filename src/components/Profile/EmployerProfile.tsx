@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Form, Input, Button, message } from "antd";
+import { Link } from "react-router-dom";
 import { api } from "../../api/axiosInstance";
-import { Building2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { Building2, ExternalLink } from "lucide-react";
 
 export const EmployerProfile = () => {
+  const { user } = useAuth();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,18 +51,30 @@ export const EmployerProfile = () => {
     return <div className="animate-pulse bg-slate-200 h-40 rounded-xl" />;
   }
 
+  const publicPath = user?._id ? `/employers/${user._id}` : null;
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-slate-100 flex items-start gap-3">
-        <div className="w-10 h-10 rounded-lg bg-[#E6F4F2] flex items-center justify-center shrink-0">
-          <Building2 size={20} className="text-[#3BA59C]" />
+      <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-[#E6F4F2] flex items-center justify-center shrink-0">
+            <Building2 size={20} className="text-[#3BA59C]" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900">Company Profile</h2>
+            <p className="text-slate-500 text-base mt-1">
+              Required before you can post jobs. Public reviews appear on your company page.
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-900">Company Profile</h2>
-          <p className="text-slate-500 text-base mt-1">
-            Required before you can post jobs. Shown on your listings.
-          </p>
-        </div>
+        {publicPath && (
+          <Link
+            to={publicPath}
+            className="text-[#3BA59C] text-base font-medium hover:underline inline-flex items-center gap-1 shrink-0"
+          >
+            View public page <ExternalLink size={16} />
+          </Link>
+        )}
       </div>
 
       <div className="p-6">
